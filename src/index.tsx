@@ -2,20 +2,20 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import './index.css'
-import {Home} from './Home'
-import {Data} from './Data'
+import Datasets from './Datasets'
+import Data from './Data'
 import reportWebVitals from './reportWebVitals'
 
 const root = ReactDOM.createRoot( document.getElementById('root') as HTMLElement )
 root.render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Datasets />} />
         <Route path="/:id" element={<Data />} />
       </Routes>
     </BrowserRouter>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

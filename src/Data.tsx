@@ -1,33 +1,44 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-import { Dataset } from './api/fetch'
+import { dataset } from './api/fetch'
+import HomeButton from './components/HomeButton'
 
-export const Data = () => {
+const Data = () => {
+  const [data, setData] = useState<any>(null)
+  const [isLoading, setLoading] = useState<Boolean>(false)
+  const {id} = useParams()
+  
+  const loadData = async () => {
+    setLoading(true)
+    const newData = await dataset(id)
+    setData(newData)
+    setLoading(false)
+  }
+
+  useEffect(()=>{ loadData() },[])
+
+  console.log(data)
+
   return (
-    <div className="App bg-slate-800 text-white min-h-screen flow-root">
-      <DatasetData />
+    <div className="Datasets bg-slate-900 text-white flow-root">
+      <HomeButton/>
+      <div className="DatasetsContainer min-h-screen lg:ml-32 max-w-[700px]">
+        {isLoading ? <div className='text-center text-3xl text-slate-400'>Loading...</div> : <ShowData data={data}/>}
+      </div>
     </div>
   )
 }
 
-const DatasetData = () => {
-  const [state, setState] = useState<any>(null)
-  const { id } = useParams()
+type ShowDataProps = {
+  data:any
+}
 
-  useEffect(() => { 
-    const fetchData = async () => {
-      setState(await Dataset(id))
-    }
-    fetchData()
-  }, [])
-
-  if (state === null) return <>Loading...</>
-  
+const ShowData = ({data}:ShowDataProps) => {
+  if (data?.message) return <div className='text-center text-3xl text-slate-400 mt-16'>Il y a eu une erreur avec les données</div>
   return (
-    <div className="lg:ml-32 max-w-[700px]">
-      <h1 className='text-4xl m-4 mt-10'>{state.title}</h1>      
-      {state.resources.map((item:any,index:number)=>{
+    <>
+      <h1 className='text-5xl mb-16 text-center'>{data?.title}</h1>
+      {data?.resources.map((item:any,index:number)=>{
         const preview_url = item.preview_url ? 
           item.preview_url.slice(0,2) === "//" ? item.preview_url : "//www.data.gouv.fr"+item.preview_url
         : ""
@@ -40,6 +51,8 @@ const DatasetData = () => {
           </div>
         )
       })}
-    </div>
+    </>
   )
 }
+
+export default Data

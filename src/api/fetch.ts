@@ -36,22 +36,7 @@
 //   previous_page: string
 // }
 
-const wrapPromise = (promise:Promise<any>) => {
-  let status = "pending",
-      result:any,
-      suspender = promise.then(
-        r => { status = "success"; result = r },
-        e => { status = "error";   result = e }
-      )
-
-  return { read() {
-    if      (status === "pending" ) { throw suspender }
-    else if (status === "error"   ) { throw result    }
-    else if (status === "success" ) { return result   }
-  } }
-}
-
-export const Datasets = ( page:number = 1, page_size:number = 5 ) => {
+export const datasets = ( page:number = 1, page_size:number = 5 ) => {
     return fetch("https://www.data.gouv.fr/api/1/datasets/"+
         "?page="+page+
         "&page_size="+page_size
@@ -60,12 +45,7 @@ export const Datasets = ( page:number = 1, page_size:number = 5 ) => {
       .then(data => data)
   }
 
-export const fetchDatasets = ( page:number = 1, page_size:number = 5 ) => {
-  const datasets = Datasets(page,page_size)
-  return wrapPromise(datasets)
-}
-
-export const Dataset = (id:string = "") => {
+export const dataset = (id:string = "") => {
     return fetch("https://www.data.gouv.fr/api/1/datasets/"+id, {method: "GET"})
       .then(response => response.json())
       .then(data => data)
