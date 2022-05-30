@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react'
 import { datasets } from './api/fetch'
 import { Link } from 'react-router-dom'
+import type { DatasetsType, DatasetType } from "./types/Datasets"
 
 let pages = 1
 
 const Datasets = () => {
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<DatasetsType|null>(null)
   const [page, setPage] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(5)
-  const [isLoading, setLoading] = useState<Boolean>(false)
+  const [pageSize] = useState<number>(5)
+  const [isLoading, setLoading] = useState<boolean>(true)
 
   const loadData = async (newPage:number=page) => {
     setLoading(true)
-    const newData = await datasets(newPage, pageSize)
+    const newData:DatasetsType = await datasets(newPage, pageSize)
     setData(newData)
     setPage(newPage)
     pages = Math.ceil(newData.total/pageSize) || 0
     setLoading(false)
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(()=>{ loadData(page) },[])
 
   return (
@@ -36,33 +38,40 @@ const Datasets = () => {
   )
 }
 
-type ControlsProps = {
+export type ControlsProps = {
   page:number,
   pages:number,
   loadData:(newPage:number)=>void
 }
 
 const Controls = ({page,pages,loadData}:ControlsProps) => {
+  const isFirstButtonAvailable = page > 1
+  const isSecondButtonAvailable = page < pages
+
   return (
     <div className="m-4 text-center">
-      <button className='rounded px-2 py-0.5 bg-emerald-700' onClick={()=>loadData(page-1)}>Previous</button>
-      <span className='px-2 py-0.5'>{page+" / "+pages}</span>
-      <button className='rounded px-2 py-0.5 bg-emerald-700' onClick={()=>loadData(page+1)}>Next</button>
+      <button className={"rounded px-2 py-0.5 "+(isFirstButtonAvailable?"bg-emerald-700":"bg-stone-700 cursor-not-allowed")}
+        onClick={()=>loadData(page-1)}
+        disabled={isFirstButtonAvailable === false}>Précédent</button>
+      <span className="px-2 py-0.5">{page+" / "+pages}</span>
+      <button className={"rounded px-2 py-0.5 "+(isSecondButtonAvailable?"bg-emerald-700":"bg-stone-700 cursor-not-allowed")} 
+        onClick={()=>loadData(page+1)}
+        disabled={isSecondButtonAvailable === false}>Suivant</button>
     </div>
   )
 }
 
 type ShowDataProps = {
-  data:any
+  data:DatasetsType|null
 }
 
 const ShowData = ({data}:ShowDataProps) => {
   if (!data || !data.data) return <div className='text-center text-3xl text-slate-400 mt-16'>Il y a eu une erreur avec les données</div>
   return (
     <div>
-      {data.data?.map((item:any,index:number)=>{
+      {data.data?.map((item:DatasetType,index:number)=>{
         return (
-          <Link to={item.id} key={index} className="mb-10 p-4 block overflow-auto">
+          <Link to={"/"+item.id} key={index} className="mb-10 p-4 block overflow-auto">
             <h2 className="text-3xl mb-3">{item.title}</h2>
             <p>{item.description}</p>
           </Link>
