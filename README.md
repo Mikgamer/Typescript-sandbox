@@ -1,6 +1,6 @@
 # Typescript Sandbox
 
-> A short project aiming to sharpen my skills, using [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [Tailwind](https://tailwindcss.com/)
+> A short project aiming to sharpen my skills, using [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) with [French gouv API](https://api.gouv.fr/documentation/api_data_gouv) and [Tailwind](https://tailwindcss.com/)
 
 ## Table of content
 
